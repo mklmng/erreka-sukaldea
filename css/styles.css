@@ -1,0 +1,1404 @@
+/* ==========================================================================
+   styles.css — Erreka Sukaldea (restaurante ficticio, proyecto de demostración)
+
+   Organización
+     @layer tokens      Custom properties: color, tipografía, espaciado
+     @layer base        Elementos HTML sin clase
+     @layer layout      Contenedores y rejillas reutilizables
+     @layer components  Bloques BEM (header, nav, hero, menu, form, …)
+     @layer utilities   Clases de apoyo de propósito único
+
+   Convenciones
+     - BEM: .bloque, .bloque__elemento, .bloque--modificador. Cada elemento
+       y modificador se escribe como selector completo de primer nivel: el
+       nesting nativo, a diferencia de Sass, NO concatena "&__elemento".
+     - CSS nesting nativo para estados, pseudoelementos, descendientes y
+       consultas de medios: &:hover, &[aria-current], &::before, & img,
+       @media dentro de la regla. Las reglas anidadas van siempre DESPUÉS de
+       las declaraciones del padre; un navegador sin nesting conserva los
+       estilos principales y solo pierde esos refinamientos.
+     - El foco visible se define sin anidar para que funcione en cualquier
+       navegador que entienda @layer.
+     - Las reglas con :has() van separadas de cualquier otra lista de
+       selectores; si un navegador no entiende :has() solo descarta esa regla.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   TOKENS
+   -------------------------------------------------------------------------- */
+@layer tokens {
+  :root {
+    /* Paleta. Contrastes calculados (fórmula WCAG 2.x) sobre --color-paper:
+       ink 15,0:1 · ink-soft 8,4:1 · accent 6,7:1.
+       border-strong sobre el fondo de los campos: 5,6:1 (mín. 3:1). */
+    --color-paper: #f5f0e8;
+    --color-paper-2: #ebe3d6;
+    --color-ink: #1e1c19;
+    --color-ink-soft: #4a453e;
+    --color-accent: #8e3a1f;
+    --color-accent-hover: #6f2c16;
+    --color-sea: #1f3b38;
+    --color-sea-ink: #f5f0e8;
+    --color-line: #d6ccbb;
+    --color-border-strong: #6e6658;
+    --color-error: #9b1c1c;
+    --color-error-bg: #fbeaea;
+    --color-ok: #1f5a33;
+    --color-ok-bg: #e7f2ea;
+    --color-focus: #1e1c19;
+    --color-focus-halo: #f5f0e8;
+    /* Tipografía: pilas del sistema, sin fuentes externas obligatorias */
+    --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+    --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    /* Escala fluida (360px → 1280px) */
+    --step--1: clamp(0.83rem, 0.8rem + 0.15vw, 0.9rem);
+    --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
+    --step-1: clamp(1.2rem, 1.12rem + 0.4vw, 1.45rem);
+    --step-2: clamp(1.44rem, 1.28rem + 0.75vw, 1.9rem);
+    --step-3: clamp(1.73rem, 1.45rem + 1.3vw, 2.55rem);
+    --step-4: clamp(2.07rem, 1.6rem + 2.2vw, 3.5rem);
+    --step-5: clamp(2.5rem, 1.7rem + 3.6vw, 4.75rem);
+    /* Espaciado */
+    --space-3xs: 0.25rem;
+    --space-2xs: 0.5rem;
+    --space-xs: 0.75rem;
+    --space-s: 1rem;
+    --space-m: 1.5rem;
+    --space-l: clamp(2rem, 1.6rem + 2vw, 3rem);
+    --space-xl: clamp(3rem, 2.2rem + 4vw, 5rem);
+    --space-2xl: clamp(4rem, 2.8rem + 6vw, 8rem);
+    --gutter: clamp(1rem, 0.6rem + 2vw, 2.5rem);
+    --measure: 65ch;
+    --container: 76rem;
+    --radius: 2px;
+    --border: 1px solid var(--color-line);
+    --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+    --duration: 200ms;
+  }
+
+  /* Modo de alto contraste forzado (Windows): se respetan los colores del sistema */
+  @media (forced-colors: active) {
+    :root {
+      --color-focus: CanvasText;
+      --color-line: CanvasText;
+    }
+  }
+}
+
+/* --------------------------------------------------------------------------
+   BASE
+   -------------------------------------------------------------------------- */
+@layer base {
+  html {
+    color-scheme: light;
+    background-color: var(--color-paper);
+  }
+
+  body {
+    font-family: var(--font-sans);
+    font-size: var(--step-0);
+    line-height: 1.6;
+    color: var(--color-ink);
+    background-color: var(--color-paper);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+  }
+
+  h1 {
+    font-size: var(--step-5);
+  }
+
+  h2 {
+    font-size: var(--step-3);
+  }
+
+  h3 {
+    font-size: var(--step-1);
+    line-height: 1.25;
+  }
+
+  a {
+    color: var(--color-accent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+
+    &:hover {
+      color: var(--color-accent-hover);
+      text-decoration-thickness: 2px;
+    }
+  }
+
+  /* Foco visible: doble anillo para que se vea sobre fondos claros y oscuros.
+     Nunca se elimina el contorno. */
+  :focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 3px;
+    box-shadow: 0 0 0 3px var(--color-focus-halo);
+  }
+
+  /* Alternativa para navegadores sin :focus-visible */
+  @supports not selector(:focus-visible) {
+    :focus {
+      outline: 3px solid var(--color-focus);
+      outline-offset: 3px;
+    }
+  }
+
+  ::selection {
+    background-color: var(--color-accent);
+    color: var(--color-paper);
+  }
+
+  hr {
+    border: 0;
+    border-top: var(--border);
+  }
+
+  abbr[title] {
+    text-decoration: underline dotted;
+    cursor: help;
+  }
+
+  strong {
+    font-weight: 650;
+  }
+
+  address {
+    font-style: normal;
+  }
+
+  code {
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+    font-size: 0.9em;
+    padding: 0.05em 0.3em;
+    background: rgb(30 28 25 / 0.07);
+    border-radius: var(--radius);
+  }
+
+  /* Navegación entre páginas con transición suave, solo donde se admite
+     y si no se ha pedido reducir el movimiento. */
+  @media (prefers-reduced-motion: no-preference) {
+    @view-transition {
+      navigation: auto;
+    }
+  }
+}
+
+/* --------------------------------------------------------------------------
+   LAYOUT
+   -------------------------------------------------------------------------- */
+@layer layout {
+  .container {
+    width: 100%;
+    max-width: var(--container);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  .container--narrow {
+    max-width: calc(var(--measure) + var(--gutter) * 2);
+  }
+
+  /* Flujo vertical entre hijos */
+  .flow > * + * {
+    margin-top: var(--flow-space, 1em);
+  }
+
+  /* Rejilla automática: tantas columnas como quepan */
+  .grid-auto {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--grid-min, 16rem)), 1fr));
+    gap: var(--grid-gap, var(--space-l));
+  }
+
+  /* Dos columnas a partir de tableta */
+  .split {
+    display: grid;
+    gap: var(--space-l);
+    align-items: center;
+
+    @media (min-width: 52em) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-xl);
+    }
+  }
+
+  .split--reverse {
+    @media (min-width: 52em) {
+      & > :first-child {
+        order: 2;
+      }
+    }
+  }
+}
+
+/* --------------------------------------------------------------------------
+   COMPONENTS
+   -------------------------------------------------------------------------- */
+@layer components {
+
+  /* ---- Enlace para saltar al contenido ---------------------------------- */
+  .skip-link {
+    position: absolute;
+    inset-block-start: var(--space-2xs);
+    inset-inline-start: var(--space-2xs);
+    z-index: 100;
+    padding: var(--space-xs) var(--space-s);
+    background: var(--color-ink);
+    color: var(--color-paper);
+    font-weight: 600;
+    text-decoration: none;
+    transform: translateY(-200%);
+
+    &:focus,
+    &:focus-visible {
+      transform: none;
+      color: var(--color-paper);
+    }
+  }
+
+  /* ---- Aviso de proyecto ficticio ---------------------------------------- */
+  .demo-banner {
+    background: var(--color-ink);
+    color: var(--color-paper);
+    font-size: var(--step--1);
+    text-align: center;
+    padding: var(--space-2xs) var(--gutter);
+
+    & strong {
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+  }
+
+  /* ---- Etiqueta "Provisional" -------------------------------------------- */
+  .tag {
+    display: inline-block;
+    padding: 0.1em 0.5em;
+    border: 1px solid currentColor;
+    border-radius: var(--radius);
+    font-family: var(--font-sans);
+    font-size: var(--step--1);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    vertical-align: 0.15em;
+    white-space: nowrap;
+  }
+
+  .tag--provisional {
+    color: var(--color-accent);
+  }
+
+  /* ---- Cabecera ---------------------------------------------------------- */
+  .site-header {
+    position: relative;
+    z-index: 10;
+    border-bottom: var(--border);
+    background-color: var(--color-paper);
+  }
+
+  .site-header__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-s);
+    padding-block: var(--space-s);
+  }
+
+  /* Sombra cuando el menú móvil está abierto (mejora con :has) */
+  .site-header:has(.nav__toggle[aria-expanded="true"]) {
+    box-shadow: 0 12px 24px -16px rgb(30 28 25 / 0.4);
+  }
+
+  .brand {
+    /* Puede encogerse (el lema pasa a dos líneas) para que el botón de menú
+       quepa en la misma línea en móviles estrechos */
+    flex: 0 1 auto;
+    min-width: 0;
+    display: inline-flex;
+    flex-direction: column;
+    color: var(--color-ink);
+    text-decoration: none;
+    line-height: 1.1;
+
+    &:hover {
+      color: var(--color-ink);
+    }
+  }
+
+  .brand__name {
+    font-family: var(--font-serif);
+    font-size: var(--step-2);
+    letter-spacing: -0.01em;
+  }
+
+  .brand__tagline {
+    font-size: var(--step--1);
+    color: var(--color-ink-soft);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+
+    @media (min-width: 30em) {
+      letter-spacing: 0.08em;
+    }
+  }
+
+  /* ---- Navegación principal ---------------------------------------------- */
+  .nav {
+    /* Sin JavaScript la lista se ve siempre (mejora progresiva) */
+    flex-basis: 100%;
+
+    @media (min-width: 52em) {
+      flex-basis: auto;
+    }
+  }
+
+  .nav__toggle {
+    display: none;
+  }
+
+  .nav__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs) var(--space-m);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .nav__link {
+    display: inline-block;
+    padding-block: var(--space-2xs);
+    color: var(--color-ink);
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+
+    &:hover {
+      color: var(--color-accent);
+      border-bottom-color: currentColor;
+    }
+    /* Página actual: subrayado y grosor, no solo color */
+    &[aria-current="page"] {
+      font-weight: 650;
+      border-bottom-color: var(--color-accent);
+    }
+  }
+
+  /* Con JavaScript, en móvil la lista se pliega tras un botón */
+  @media (max-width: 51.99em) {
+    .js .nav__toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2xs);
+      min-height: 44px;
+      padding: var(--space-2xs) var(--space-s);
+      border: 1px solid var(--color-ink);
+      border-radius: var(--radius);
+      background: transparent;
+      font-weight: 600;
+    }
+
+    .js .site-header__inner {
+      flex-wrap: nowrap;
+    }
+
+    .js .nav {
+      flex-shrink: 0;
+      flex-basis: auto;
+      margin-inline-start: auto;
+    }
+
+    .js .nav__list {
+      display: none;
+    }
+
+    .js .nav--open .nav__list {
+      position: absolute;
+      inset-inline: 0;
+      inset-block-start: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      padding: var(--space-s) var(--gutter) var(--space-m);
+      background: var(--color-paper);
+      border-bottom: var(--border);
+    }
+
+    .js .nav--open .nav__link {
+      display: block;
+      padding-block: var(--space-xs);
+      font-size: var(--step-1);
+      font-family: var(--font-serif);
+    }
+  }
+
+  /* Icono de hamburguesa dibujado con ::before / ::after */
+  .nav__icon {
+    position: relative;
+    display: inline-block;
+    width: 1.1em;
+    height: 2px;
+    background: currentColor;
+
+    &::before,
+    &::after {
+      content: "";
+      position: absolute;
+      inset-inline: 0;
+      height: 2px;
+      background: currentColor;
+    }
+
+    &::before {
+      top: -6px;
+    }
+
+    &::after {
+      top: 6px;
+    }
+  }
+
+  .nav--open .nav__icon {
+    background: transparent;
+  }
+
+  .nav--open .nav__icon::before {
+    top: 0;
+    transform: rotate(45deg);
+  }
+
+  .nav--open .nav__icon::after {
+    top: 0;
+    transform: rotate(-45deg);
+  }
+
+  /* ---- Antetítulo editorial con raya ------------------------------------ */
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-size: var(--step--1);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-ink-soft);
+
+    &::before {
+      content: "";
+      flex: 0 0 2.5rem;
+      height: 1px;
+      background: currentColor;
+    }
+  }
+
+  /* ---- Cabecera de página interior -------------------------------------- */
+  .page-intro {
+    padding-block: var(--space-xl) var(--space-l);
+    border-bottom: var(--border);
+  }
+
+  .page-intro__title {
+    margin-top: var(--space-s);
+    max-width: 18ch;
+  }
+
+  .page-intro__lead {
+    margin-top: var(--space-m);
+    max-width: var(--measure);
+    font-size: var(--step-1);
+    color: var(--color-ink-soft);
+  }
+
+  /* ---- Héroe de portada -------------------------------------------------- */
+  .hero {
+    padding-block: var(--space-xl);
+  }
+
+  .hero__title {
+    margin-top: var(--space-s);
+    max-width: 14ch;
+  }
+
+  .hero__lead {
+    margin-top: var(--space-m);
+    max-width: 42ch;
+    font-size: var(--step-1);
+    color: var(--color-ink-soft);
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-s);
+    margin-top: var(--space-l);
+  }
+
+  .hero__figure {
+    margin: 0;
+  }
+
+  .hero__figure img {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .hero__title,
+    .hero__lead,
+    .hero__actions {
+      animation: rise 700ms var(--ease) both;
+    }
+
+    .hero__lead {
+      animation-delay: 80ms;
+    }
+
+    .hero__actions {
+      animation-delay: 160ms;
+    }
+  }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(0.75rem);
+    }
+  }
+
+  /* ---- Pie de figura ----------------------------------------------------- */
+  .figure {
+    margin: 0;
+
+    & img {
+      width: 100%;
+      background: var(--color-paper-2);
+    }
+  }
+
+  .figure__caption {
+    margin-top: var(--space-2xs);
+    font-size: var(--step--1);
+    color: var(--color-ink-soft);
+  }
+
+  /* ---- Botones ----------------------------------------------------------- */
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2xs);
+    min-height: 48px;
+    padding: var(--space-xs) var(--space-m);
+    border: 1px solid var(--color-ink);
+    border-radius: var(--radius);
+    background: var(--color-ink);
+    color: var(--color-paper);
+    font-weight: 600;
+    text-decoration: none;
+    line-height: 1.2;
+
+    &:hover {
+      background: var(--color-accent);
+      border-color: var(--color-accent);
+      color: var(--color-paper);
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      transition: background-color var(--duration) var(--ease),
+        color var(--duration) var(--ease),
+        border-color var(--duration) var(--ease);
+    }
+  }
+
+  .button--ghost {
+    background: transparent;
+    color: var(--color-ink);
+
+    &:hover {
+      background: var(--color-ink);
+      border-color: var(--color-ink);
+      color: var(--color-paper);
+    }
+  }
+
+  /* ---- Secciones --------------------------------------------------------- */
+  .section {
+    padding-block: var(--space-2xl);
+
+    & + & {
+      border-top: var(--border);
+    }
+  }
+
+  .section__header {
+    margin-bottom: var(--space-l);
+    max-width: var(--measure);
+  }
+
+  .section__title {
+    margin-top: var(--space-xs);
+  }
+
+  .section__lead {
+    margin-top: var(--space-s);
+    color: var(--color-ink-soft);
+  }
+
+  /* Sección de fondo oscuro: se reasignan tokens para mantener contraste */
+  .section--sea {
+    --color-ink: var(--color-sea-ink);
+    --color-ink-soft: #d9d2c5;
+    --color-accent: #f0b9a3;
+    --color-accent-hover: #ffd9c9;
+    --color-line: #4d6662;
+    --color-focus: #f5f0e8;
+    --color-focus-halo: #1f3b38;
+    background: var(--color-sea);
+    color: var(--color-ink);
+
+    & .button {
+      background: var(--color-paper);
+      border-color: var(--color-paper);
+      color: var(--color-sea);
+
+      &:hover {
+        background: var(--color-accent);
+        border-color: var(--color-accent);
+        color: var(--color-sea);
+      }
+    }
+  }
+
+  .section--paper-2 {
+    background: var(--color-paper-2);
+  }
+
+  /* ---- Pilares (portada) ------------------------------------------------- */
+  .pillar {
+    padding-top: var(--space-s);
+    border-top: 1px solid var(--color-ink);
+  }
+
+  .pillar__number {
+    display: block;
+    font-family: var(--font-serif);
+    font-size: var(--step-2);
+    color: var(--color-accent);
+  }
+
+  .pillar__title {
+    margin-top: var(--space-2xs);
+  }
+
+  .pillar__text {
+    margin-top: var(--space-2xs);
+    color: var(--color-ink-soft);
+  }
+
+  /* ---- Tarjeta de plato -------------------------------------------------- */
+  .dish-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+  }
+
+  .dish-card__media {
+    margin: 0;
+  }
+
+  .dish-card__media img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    background: var(--color-paper-2);
+  }
+
+  .dish-card__title {
+    font-size: var(--step-1);
+  }
+
+  .dish-card__text {
+    color: var(--color-ink-soft);
+  }
+
+  /* ---- Carta ------------------------------------------------------------- */
+  .menu {
+    display: grid;
+    gap: var(--space-xl);
+
+    @media (min-width: 60em) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: var(--space-2xl);
+    }
+  }
+
+  .menu__group-title {
+    padding-bottom: var(--space-xs);
+    border-bottom: 1px solid var(--color-ink);
+    font-size: var(--step-2);
+  }
+
+  .menu__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .menu__item {
+    padding-block: var(--space-m);
+    border-bottom: var(--border);
+  }
+
+  .menu__head {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-xs);
+    /* Línea de puntos entre el nombre y el precio (decorativa) */
+    &::after {
+      content: "";
+      order: 1;
+      flex: 1 1 2rem;
+      min-width: 1.5rem;
+      border-bottom: 1px dotted var(--color-border-strong);
+      transform: translateY(-0.3em);
+    }
+  }
+
+  .menu__name {
+    font-size: var(--step-1);
+  }
+
+  .menu__price {
+    order: 2;
+    font-family: var(--font-serif);
+    font-size: var(--step-1);
+    white-space: nowrap;
+  }
+
+  .menu__desc {
+    margin-top: var(--space-2xs);
+    color: var(--color-ink-soft);
+    max-width: 52ch;
+  }
+
+  .menu__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs);
+    margin-top: var(--space-2xs);
+    padding: 0;
+    list-style: none;
+    font-size: var(--step--1);
+  }
+
+  /* Distintivo dietético: texto + símbolo, nunca solo color */
+  .diet {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35em;
+    padding: 0.1em 0.55em;
+    border: 1px solid var(--color-border-strong);
+    border-radius: 999px;
+    color: var(--color-ink-soft);
+
+    &::before {
+      content: "●";
+      font-size: 0.7em;
+    }
+  }
+
+  .diet--veg::before {
+    content: "✿";
+  }
+
+  .diet--sea::before {
+    content: "≈";
+  }
+
+  /* Ligero realce del plato vegetariano cuando se admite :has() */
+  .menu__item:has(.diet--veg) .menu__name {
+    font-style: italic;
+  }
+
+  /* ---- Menú degustación -------------------------------------------------- */
+  .tasting {
+    counter-reset: paso;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .tasting__step {
+    counter-increment: paso;
+    display: grid;
+    grid-template-columns: 3rem 1fr;
+    gap: var(--space-s);
+    padding-block: var(--space-s);
+    border-bottom: var(--border);
+
+    &::before {
+      content: counter(paso, decimal-leading-zero);
+      font-family: var(--font-serif);
+      font-size: var(--step-1);
+      color: var(--color-accent);
+    }
+  }
+
+  .tasting__name {
+    font-family: var(--font-serif);
+    font-size: var(--step-1);
+  }
+
+  .tasting__desc {
+    color: var(--color-ink-soft);
+  }
+
+  .price-note {
+    margin-top: var(--space-m);
+    font-family: var(--font-serif);
+    font-size: var(--step-2);
+  }
+
+  /* ---- Cita -------------------------------------------------------------- */
+  .quote {
+    margin: 0;
+    max-width: 30ch;
+  }
+
+  .quote__text {
+    font-family: var(--font-serif);
+    font-size: var(--step-3);
+    line-height: 1.2;
+
+    &::before {
+      content: "«";
+    }
+
+    &::after {
+      content: "»";
+    }
+  }
+
+  .quote__author {
+    margin-top: var(--space-s);
+    font-size: var(--step--1);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-ink-soft);
+  }
+
+  /* ---- Ficha de equipo --------------------------------------------------- */
+  .person {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+  }
+
+  .person__media {
+    margin: 0;
+  }
+
+  .person__media img {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    background: var(--color-paper-2);
+  }
+
+  .person__name {
+    font-size: var(--step-2);
+  }
+
+  .person__role {
+    font-size: var(--step--1);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-ink-soft);
+  }
+
+  /* ---- Línea de tiempo --------------------------------------------------- */
+  .timeline {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-inline-start: 1px solid var(--color-ink);
+  }
+
+  .timeline__item {
+    position: relative;
+    padding: 0 0 var(--space-l) var(--space-m);
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset-inline-start: -5px;
+      inset-block-start: 0.55em;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--color-accent);
+    }
+  }
+
+  .timeline__year {
+    font-family: var(--font-serif);
+    font-size: var(--step-2);
+  }
+
+  /* ---- Galería ----------------------------------------------------------- */
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+    gap: var(--space-l) var(--space-m);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    @media (min-width: 60em) {
+      grid-template-columns: repeat(12, 1fr);
+
+      & > :nth-child(6n + 1) {
+        grid-column: span 7;
+      }
+
+      & > :nth-child(6n + 2) {
+        grid-column: span 5;
+      }
+
+      & > :nth-child(6n + 3),
+      & > :nth-child(6n + 4),
+      & > :nth-child(6n + 5) {
+        grid-column: span 4;
+      }
+
+      & > :nth-child(6n + 6) {
+        grid-column: span 12;
+      }
+    }
+  }
+
+  .gallery__figure {
+    margin: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .gallery__media {
+    position: relative;
+    flex: 1;
+    overflow: hidden;
+    background: var(--color-paper-2);
+  }
+
+  .gallery__media img {
+    width: 100%;
+    height: 100%;
+    min-height: 14rem;
+    max-height: 34rem;
+    object-fit: cover;
+  }
+
+  .gallery__caption {
+    margin-top: var(--space-2xs);
+    font-size: var(--step--1);
+    color: var(--color-ink-soft);
+  }
+
+  /* Botón que añade JS para ampliar la imagen */
+  .gallery__open {
+    position: absolute;
+    inset-block-end: var(--space-xs);
+    inset-inline-end: var(--space-xs);
+    min-height: 44px;
+    padding: var(--space-2xs) var(--space-s);
+    border: 1px solid var(--color-ink);
+    border-radius: var(--radius);
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-size: var(--step--1);
+    font-weight: 600;
+
+    &:hover {
+      background: var(--color-ink);
+      color: var(--color-paper);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .gallery__media img {
+      transition: transform 600ms var(--ease);
+    }
+
+    .gallery__media:has(.gallery__open:hover) img,
+    .gallery__media:has(.gallery__open:focus-visible) img {
+      transform: scale(1.03);
+    }
+  }
+
+  /* ---- Visor (dialog nativo) -------------------------------------------- */
+  .lightbox {
+    width: min(100% - 2rem, 64rem);
+    max-height: calc(100vh - 2rem);
+    padding: var(--space-m);
+    border: 0;
+    border-radius: var(--radius);
+    background: var(--color-paper);
+    color: var(--color-ink);
+
+    &::backdrop {
+      background: rgb(20 18 16 / 0.85);
+    }
+  }
+
+  .lightbox__img {
+    width: 100%;
+    max-height: 70vh;
+    object-fit: contain;
+  }
+
+  .lightbox__caption {
+    margin-top: var(--space-s);
+    color: var(--color-ink-soft);
+  }
+
+  .lightbox__close {
+    display: block;
+    margin-inline-start: auto;
+    margin-bottom: var(--space-s);
+  }
+
+  /* Bloquea el desplazamiento del fondo con el visor abierto (mejora con :has) */
+  html:has(.lightbox[open]) {
+    overflow: hidden;
+  }
+
+  /* ---- Datos de contacto y horarios ------------------------------------- */
+  .info-list {
+    display: grid;
+    gap: var(--space-s);
+    margin: 0;
+
+    & dt {
+      font-weight: 650;
+    }
+
+    & dd {
+      margin: 0;
+      color: var(--color-ink-soft);
+    }
+  }
+
+  .info-list__row {
+    display: grid;
+    gap: var(--space-3xs);
+    padding-bottom: var(--space-s);
+    border-bottom: var(--border);
+
+    @media (min-width: 36em) {
+      grid-template-columns: 11rem 1fr;
+      gap: var(--space-s);
+    }
+  }
+
+  /* ---- Aviso (información, estado, alerta) ------------------------------- */
+  .notice {
+    padding: var(--space-s) var(--space-m);
+    border: 1px solid var(--color-ink);
+    border-inline-start-width: 6px;
+    background: var(--color-paper);
+
+    & ul {
+      margin-top: var(--space-2xs);
+      padding-inline-start: 1.25rem;
+    }
+
+    & a {
+      color: var(--color-error);
+      font-weight: 600;
+    }
+
+    &:focus-visible {
+      outline-offset: 4px;
+    }
+  }
+
+  .notice__title {
+    font-family: var(--font-sans);
+    font-size: var(--step-0);
+    font-weight: 700;
+  }
+
+  .notice--error {
+    border-color: var(--color-error);
+    background: var(--color-error-bg);
+  }
+
+  .notice--success {
+    border-color: var(--color-ok);
+    background: var(--color-ok-bg);
+  }
+
+  /* ---- Formulario -------------------------------------------------------- */
+  .form {
+    display: grid;
+    gap: var(--space-m);
+
+    & textarea.form__control {
+      min-height: 8rem;
+    }
+  }
+
+  .form__row {
+    display: grid;
+    gap: var(--space-m);
+
+    @media (min-width: 36em) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .form__row--3 {
+    @media (min-width: 48em) {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .form__field {
+    display: grid;
+    gap: var(--space-3xs);
+    align-content: start;
+  }
+
+  .form__label {
+    font-weight: 650;
+  }
+
+  .form__optional,
+  .form__required {
+    font-weight: 400;
+    color: var(--color-ink-soft);
+  }
+
+  .form__hint {
+    font-size: var(--step--1);
+    color: var(--color-ink-soft);
+  }
+
+  .form__control {
+    width: 100%;
+    min-height: 48px;
+    padding: var(--space-xs) var(--space-s);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius);
+    background: #fffdf9;
+    color: var(--color-ink);
+
+    &:hover {
+      border-color: var(--color-ink);
+    }
+
+    &[aria-invalid="true"] {
+      border-color: var(--color-error);
+      border-width: 2px;
+    }
+  }
+
+  .form__error {
+    display: flex;
+    gap: 0.4em;
+    font-size: var(--step--1);
+    font-weight: 600;
+    color: var(--color-error);
+    /* Símbolo además del color y del texto */
+    &::before {
+      content: "⚠";
+    }
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  .form__check {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-xs);
+    align-items: start;
+
+    & input {
+      width: 1.35rem;
+      height: 1.35rem;
+      margin-top: 0.15rem;
+      accent-color: var(--color-accent);
+    }
+  }
+
+  .form__counter {
+    font-size: var(--step--1);
+    color: var(--color-ink-soft);
+    text-align: end;
+  }
+
+  .form__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-s);
+  }
+
+  /* Campo con error: borde lateral (clase añadida por JS, funciona sin :has) */
+  .form__field--invalid {
+    padding-inline-start: var(--space-s);
+    border-inline-start: 4px solid var(--color-error);
+  }
+
+  /* Realce de la etiqueta del campo enfocado (mejora con :has) */
+  .form__field:has(.form__control:focus-visible) .form__label {
+    color: var(--color-accent);
+  }
+
+  /* ---- Tabla de créditos ------------------------------------------------- */
+  .table-wrap {
+    overflow-x: auto;
+  }
+
+  .credits {
+    width: 100%;
+    min-width: 40rem;
+    font-size: var(--step--1);
+    text-align: start;
+
+    & th,
+    & td {
+      padding: var(--space-xs) var(--space-s);
+      border-bottom: 1px solid var(--color-border-strong);
+      text-align: start;
+      vertical-align: top;
+    }
+
+    & th {
+      font-weight: 700;
+    }
+  }
+
+  /* ---- Pie de página ----------------------------------------------------- */
+  .site-footer {
+    padding-block: var(--space-xl) var(--space-l);
+    background: var(--color-ink);
+    color: var(--color-paper);
+    --color-focus: #f5f0e8;
+    --color-focus-halo: #1e1c19;
+
+    & a {
+      color: var(--color-paper);
+
+      &:hover {
+        color: #f0b9a3;
+      }
+    }
+  }
+
+  .site-footer__grid {
+    display: grid;
+    gap: var(--space-l);
+
+    @media (min-width: 48em) {
+      grid-template-columns: 2fr 1fr 1fr;
+    }
+  }
+
+  .site-footer__title {
+    font-family: var(--font-sans);
+    font-size: var(--step--1);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #d6cec0;
+  }
+
+  .site-footer__brand {
+    font-family: var(--font-serif);
+    font-size: var(--step-3);
+  }
+
+  .site-footer__list {
+    margin: var(--space-xs) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .site-footer__legal {
+    margin-top: var(--space-xl);
+    padding-top: var(--space-m);
+    border-top: 1px solid #4a453e;
+    font-size: var(--step--1);
+    color: #d6cec0;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   UTILITIES
+   -------------------------------------------------------------------------- */
+@layer utilities {
+  /* Oculto visualmente, disponible para lectores de pantalla */
+  .visually-hidden {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    clip-path: inset(50%) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+  }
+
+  .mt-s {
+    margin-top: var(--space-s);
+  }
+
+  .mt-m {
+    margin-top: var(--space-m);
+  }
+
+  .mt-l {
+    margin-top: var(--space-l);
+  }
+
+  .text-soft {
+    color: var(--color-ink-soft);
+  }
+
+  .measure {
+    max-width: var(--measure);
+  }
+}
+
+/* Impresión: fondo claro, sin navegación ni aviso */
+@media print {
+  .skip-link,
+  .nav,
+  .demo-banner,
+  .hero__actions {
+    display: none !important;
+  }
+
+  .section--sea,
+  .site-footer {
+    background: none !important;
+    color: #000 !important;
+  }
+}

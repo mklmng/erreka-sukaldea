@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="es" class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contacto y reservas · Erreka Sukaldea (restaurante ficticio)</title>
+  <meta name="description" content="Dirección, horario y formulario de solicitud de reserva de Erreka Sukaldea. Datos provisionales; el formulario no envía información.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#f5f0e8">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_ES">
+  <meta property="og:title" content="Contacto y reservas · Erreka Sukaldea (restaurante ficticio)">
+  <meta property="og:description" content="Dirección, horario y formulario de solicitud de reserva de Erreka Sukaldea. Datos provisionales; el formulario no envía información.">
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <script>document.documentElement.className = document.documentElement.className.replace("no-js", "js");</script>
+  <script src="js/main.js" defer></script>
+  <script src="js/reservas.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Saltar al contenido principal</a>
+
+  <header class="site-header">
+    <p class="demo-banner"><strong>Proyecto de demostración.</strong> Erreka Sukaldea es un restaurante ficticio: nombre, dirección, teléfono, horarios, equipo y platos son datos provisionales.</p>
+    <div class="container site-header__inner">
+      <a class="brand" href="index.html">
+        <span class="brand__name">Erreka Sukaldea</span>
+        <span class="brand__tagline">Cocina vasca contemporánea</span>
+      </a>
+      <nav class="nav" aria-label="Principal" data-nav>
+        <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-lista">
+          <span class="nav__icon" aria-hidden="true"></span>
+          <span>Menú</span>
+        </button>
+        <ul class="nav__list" id="nav-lista">
+          <li><a class="nav__link" href="index.html">Inicio</a></li>
+          <li><a class="nav__link" href="cocina.html">Cocina</a></li>
+          <li><a class="nav__link" href="galeria.html">Galería</a></li>
+          <li><a class="nav__link" href="sobre-nosotros.html">Sobre nosotros</a></li>
+          <li><a class="nav__link" href="contacto.html" aria-current="page">Contacto y reservas</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="contenido" tabindex="-1">
+    <header class="page-intro">
+      <div class="container">
+        <p class="eyebrow">Contacto</p>
+        <h1 class="page-intro__title">Contacto y reservas</h1>
+        <p class="page-intro__lead">Datos de contacto, horarios y formulario de solicitud. Todos los datos de esta página son provisionales y el formulario todavía no está conectado a ningún servicio.</p>
+      </div>
+    </header>
+
+    <section class="section" aria-labelledby="titulo-datos">
+      <div class="container split">
+        <div>
+          <h2 id="titulo-datos">Dónde y cuándo</h2>
+          <dl class="info-list mt-m">
+            <div class="info-list__row">
+              <dt>Dirección</dt>
+              <dd>Itsasaldeko kalea, 0 · Gipuzkoa <span class="tag tag--provisional">Ficticia</span></dd>
+            </div>
+            <div class="info-list__row">
+              <dt>Teléfono</dt>
+              <dd>000 000 000 <span class="tag tag--provisional">Ficticio</span></dd>
+            </div>
+            <div class="info-list__row">
+              <dt>Correo</dt>
+              <dd><a href="mailto:reservas@example.com">reservas@example.com</a> <span class="tag tag--provisional">Ejemplo</span></dd>
+            </div>
+            <div class="info-list__row">
+              <dt>Comidas</dt>
+              <dd>Miércoles a domingo, de 13:30 a 15:30 (última entrada a las 15:00)</dd>
+            </div>
+            <div class="info-list__row">
+              <dt>Cenas</dt>
+              <dd>Jueves a sábado, de 20:30 a 22:30 (última entrada a las 22:00)</dd>
+            </div>
+            <div class="info-list__row">
+              <dt>Cerrado</dt>
+              <dd>Lunes y martes</dd>
+            </div>
+          </dl>
+        </div>
+        <aside class="notice" aria-labelledby="titulo-aviso-datos">
+          <h2 class="notice__title" id="titulo-aviso-datos">Sobre estos datos</h2>
+          <p>Erreka Sukaldea no existe. El teléfono no es un número real y el correo usa <code>example.com</code>, un dominio reservado para ejemplos que no entrega mensajes. Sustitúyelos por datos reales antes de publicar el sitio para un negocio.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section section--paper-2" id="reserva" aria-labelledby="titulo-reserva">
+      <div class="container container--narrow">
+        <header class="section__header">
+          <p class="eyebrow">Solicitud</p>
+          <h2 class="section__title" id="titulo-reserva">Solicitar una reserva</h2>
+        </header>
+
+        <div class="notice" id="aviso-reserva">
+          <p class="notice__title">Esto es una solicitud, no una reserva confirmada</p>
+          <p>Una reserva solo existe cuando el restaurante la confirma. Además, en esta versión de demostración <strong>el formulario no envía tus datos a ningún sitio</strong>: se comprueban en tu navegador y se descartan.</p>
+        </div>
+
+        <noscript>
+          <div class="notice notice--error mt-m">
+            <p class="notice__title">El formulario necesita JavaScript</p>
+            <p>Para preparar la solicitud activa JavaScript en tu navegador. Puedes consultar el horario y los datos de contacto más arriba.</p>
+          </div>
+        </noscript>
+
+        <div class="notice notice--error mt-m" id="resumen-errores" tabindex="-1" hidden>
+          <h3 class="notice__title" id="titulo-errores">Revisa los siguientes campos</h3>
+          <ul data-error-list></ul>
+        </div>
+
+        <form class="form mt-l" id="form-reserva" aria-labelledby="titulo-reserva" aria-describedby="aviso-reserva" data-reservas>
+          <p class="form__hint">Los campos marcados con <span aria-hidden="true">*</span><span class="visually-hidden">asterisco</span> son obligatorios.</p>
+
+          <div class="form__field">
+            <label class="form__label" for="nombre">Nombre y apellidos <span class="form__required" aria-hidden="true">*</span></label>
+            <input class="form__control" type="text" id="nombre" name="nombre" autocomplete="name" required maxlength="80" aria-describedby="nombre-error">
+            <p class="form__error" id="nombre-error"></p>
+          </div>
+
+          <div class="form__row">
+            <div class="form__field">
+              <label class="form__label" for="email">Correo electrónico <span class="form__required" aria-hidden="true">*</span></label>
+              <input class="form__control" type="email" id="email" name="email" autocomplete="email" required maxlength="120" aria-describedby="email-pista email-error">
+              <p class="form__hint" id="email-pista">Ejemplo: nombre@dominio.es</p>
+              <p class="form__error" id="email-error"></p>
+            </div>
+            <div class="form__field">
+              <label class="form__label" for="telefono">Teléfono <span class="form__optional">(opcional)</span></label>
+              <input class="form__control" type="tel" id="telefono" name="telefono" autocomplete="tel" inputmode="tel" maxlength="20" aria-describedby="telefono-pista telefono-error">
+              <p class="form__hint" id="telefono-pista">Entre 9 y 15 cifras. Puedes usar espacios y el prefijo +34.</p>
+              <p class="form__error" id="telefono-error"></p>
+            </div>
+          </div>
+
+          <div class="form__row form__row--3">
+            <div class="form__field">
+              <label class="form__label" for="fecha">Fecha <span class="form__required" aria-hidden="true">*</span></label>
+              <input class="form__control" type="date" id="fecha" name="fecha" required aria-describedby="fecha-pista fecha-error">
+              <p class="form__hint" id="fecha-pista">De miércoles a domingo, hasta 90 días vista.</p>
+              <p class="form__error" id="fecha-error"></p>
+            </div>
+            <div class="form__field">
+              <label class="form__label" for="hora">Hora <span class="form__required" aria-hidden="true">*</span></label>
+              <select class="form__control" id="hora" name="hora" required aria-describedby="hora-pista hora-error">
+                <option value="">Elige una hora</option>
+                <optgroup label="Comida (miércoles a domingo)">
+                  <option value="13:30">13:30</option>
+                  <option value="14:00">14:00</option>
+                  <option value="14:30">14:30</option>
+                  <option value="15:00">15:00</option>
+                </optgroup>
+                <optgroup label="Cena (jueves a sábado)">
+                  <option value="20:30">20:30</option>
+                  <option value="21:00">21:00</option>
+                  <option value="21:30">21:30</option>
+                  <option value="22:00">22:00</option>
+                </optgroup>
+              </select>
+              <p class="form__hint" id="hora-pista">Las cenas solo se sirven de jueves a sábado.</p>
+              <p class="form__error" id="hora-error"></p>
+            </div>
+            <div class="form__field">
+              <label class="form__label" for="comensales">Comensales <span class="form__required" aria-hidden="true">*</span></label>
+              <input class="form__control" type="number" id="comensales" name="comensales" min="1" max="8" step="1" value="2" inputmode="numeric" required aria-describedby="comensales-pista comensales-error">
+              <p class="form__hint" id="comensales-pista">De 1 a 8 personas.</p>
+              <p class="form__error" id="comensales-error"></p>
+            </div>
+          </div>
+
+          <div class="form__field">
+            <label class="form__label" for="observaciones">Observaciones <span class="form__optional">(opcional)</span></label>
+            <textarea class="form__control" id="observaciones" name="observaciones" rows="5" maxlength="500" aria-describedby="observaciones-pista observaciones-error"></textarea>
+            <p class="form__hint" id="observaciones-pista">Alergias, intolerancias, accesibilidad, trona, celebraciones… Máximo 500 caracteres.</p>
+            <p class="form__counter" data-counter aria-hidden="true"></p>
+            <p class="visually-hidden" data-counter-live aria-live="polite"></p>
+            <p class="form__error" id="observaciones-error"></p>
+          </div>
+
+          <div class="form__field">
+            <div class="form__check">
+              <input type="checkbox" id="entiendo" name="entiendo" required aria-describedby="entiendo-error">
+              <label for="entiendo">Entiendo que esto es una solicitud y que no tendré reserva hasta recibir una confirmación del restaurante. <span class="form__required" aria-hidden="true">*</span></label>
+            </div>
+            <p class="form__error" id="entiendo-error"></p>
+          </div>
+
+          <div class="form__actions">
+            <button class="button" type="submit" data-submit hidden>Preparar solicitud</button>
+            <button class="button button--ghost" type="reset" data-reset hidden>Borrar formulario</button>
+          </div>
+        </form>
+
+        <div class="notice notice--success mt-l" id="resultado" tabindex="-1" hidden>
+          <h3 class="notice__title">Solicitud preparada, pero no enviada</h3>
+          <p>Los datos son correctos. Como este sitio todavía no tiene un servicio de recepción, <strong>no se ha enviado nada y no existe ninguna reserva</strong>. Este es el resumen que recibiría el restaurante:</p>
+          <dl class="info-list mt-s" data-summary></dl>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="site-footer__grid">
+        <div>
+          <p class="site-footer__brand">Erreka Sukaldea</p>
+          <p>Restaurante ficticio creado como proyecto de demostración. Todos los datos son provisionales.</p>
+        </div>
+        <div>
+          <h2 class="site-footer__title">Dirección</h2>
+          <address class="site-footer__list">
+            Itsasaldeko kalea, 0<br>
+            Gipuzkoa (dirección ficticia)<br>
+            <a href="mailto:reservas@example.com">reservas@example.com</a>
+          </address>
+        </div>
+        <nav aria-label="Pie de página">
+          <h2 class="site-footer__title">Explora</h2>
+          <ul class="site-footer__list">
+            <li><a href="cocina.html">Cocina</a></li>
+            <li><a href="galeria.html">Galería</a></li>
+            <li><a href="sobre-nosotros.html">Sobre nosotros</a></li>
+            <li><a href="contacto.html">Contacto y reservas</a></li>
+            <li><a href="galeria.html#creditos">Créditos de imágenes</a></li>
+          </ul>
+        </nav>
+      </div>
+      <p class="site-footer__legal">© <span data-year>2026</span> Erreka Sukaldea · Proyecto de demostración sin actividad comercial. Contenido e ilustraciones originales.</p>
+    </div>
+  </footer>
+</body>
+</html>

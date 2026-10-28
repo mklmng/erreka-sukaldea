@@ -1,0 +1,123 @@
+/* ==========================================================================
+   reset.css — Erreka Sukaldea (proyecto de demostración)
+   Reset moderno y moderado.
+
+   Orden de capas del proyecto. Se declara aquí, en el primer CSS que se carga,
+   para que la prioridad sea siempre: reset < tokens < base < layout <
+   components < utilities.
+
+   Navegadores antiguos (sin soporte de @layer: Chrome < 99, Safari < 15.4,
+   Firefox < 97) ignoran por completo los bloques @layer. Para ellos dejamos
+   fuera de capa solo unas pocas reglas inocuas que mantienen la página legible.
+   Las reglas sin capa ganan a las de capa en navegadores modernos, por eso
+   aquí solo hay propiedades que ningún componente necesita sobrescribir.
+   ========================================================================== */
+
+@layer reset, tokens, base, layout, components, utilities;
+
+/* --- Alternativa sin capa para navegadores antiguos --------------------- */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+img,
+svg,
+video {
+  max-width: 100%;
+}
+
+/* --- Reset en capa ------------------------------------------------------- */
+@layer reset {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  * {
+    margin: 0;
+  }
+
+  html {
+    /* Evita saltos al ocultar/mostrar la barra de desplazamiento */
+    scrollbar-gutter: stable;
+  }
+
+  body {
+    min-height: 100vh;
+    min-height: 100dvh;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  img,
+  picture,
+  video,
+  canvas,
+  svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+
+  input,
+  button,
+  textarea,
+  select {
+    font: inherit;
+    color: inherit;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  textarea {
+    resize: vertical;
+  }
+
+  p,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    overflow-wrap: break-word;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Solo se quitan viñetas en listas marcadas explícitamente como lista
+     de navegación o de presentación; así VoiceOver mantiene la semántica. */
+  ul[role="list"],
+  ol[role="list"] {
+    list-style: none;
+    padding: 0;
+  }
+
+  table {
+    border-collapse: collapse;
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+
+  /* El desplazamiento suave solo si la persona no pide reducir el movimiento */
+  @media (prefers-reduced-motion: no-preference) {
+    html:focus-within {
+      scroll-behavior: smooth;
+    }
+  }
+}
